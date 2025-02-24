@@ -2,6 +2,9 @@ import { getAllPosts } from '@/lib/posts';
 import { PostList } from '@/components/index';
 import Link from 'next/link';
 
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export default async function HomePage() {
   const posts = await getAllPosts();
 

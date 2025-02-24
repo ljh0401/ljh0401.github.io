@@ -12,13 +12,18 @@ interface BlogPageProps {
   };
 }
 
+// 정적 페이지 생성을 위한 설정
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const currentPage = Number(searchParams.page) || 1;
-  const selectedCategory = searchParams.category;
+  // 페이지 파라미터를 안전하게 처리
+  const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
+  const selectedCategory = searchParams?.category || '';
 
   const { items: posts, totalPages } = await getPaginatedPosts({
-    page: currentPage,
-    category: selectedCategory,
+    page: isNaN(page) ? 1 : page,
+    category: selectedCategory || undefined,
   });
 
   return (
@@ -55,7 +60,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
         <PostList posts={posts} />
         <Pagination
-          currentPage={currentPage}
+          currentPage={isNaN(page) ? 1 : page}
           totalPages={totalPages}
           baseUrl="/blog"
           category={selectedCategory}
@@ -65,27 +70,35 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   );
 }
 
+// generateStaticParams 수정
 export async function generateStaticParams() {
   const posts = await getAllPosts();
   const categories = Array.from(new Set(posts.map(post => post.category)));
   const totalPages = Math.ceil(posts.length / 10);
   
-  const params = [];
+  const paths = [];
   
-  // 카테고리가 없는 경우의 페이지들
+  // 기본 경로 추가
+  paths.push({ searchParams: {} });
+  
+  // 페이지 번호만 있는 경로
   for (let i = 1; i <= totalPages; i++) {
-    params.push({
-      searchParams: { page: i.toString() }
+    paths.push({ 
+      searchParams: { page: i.toString() } 
     });
   }
   
-  // 각 카테고리별 페이지들
+  // 카테고리별 경로
   for (const category of categories) {
+    paths.push({ 
+      searchParams: { category } 
+    });
+    
     const categoryPosts = posts.filter(post => post.category === category);
     const categoryPages = Math.ceil(categoryPosts.length / 10);
     
     for (let i = 1; i <= categoryPages; i++) {
-      params.push({
+      paths.push({ 
         searchParams: {
           category,
           page: i.toString()
@@ -94,5 +107,5 @@ export async function generateStaticParams() {
     }
   }
   
-  return params;
+  return paths;
 } 
