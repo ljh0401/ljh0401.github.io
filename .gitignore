@@ -150,3 +150,11 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,react
+.next
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.development.local
+.next/
