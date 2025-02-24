@@ -5,26 +5,8 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import { Post, PostMeta } from '@/types/post';
 import { PaginationResult, PaginationParams } from '@/types/pagination';
+
 const postsDirectory = path.join(process.cwd(), 'src/content/posts');
-const DEFAULT_PAGE_SIZE = 10;
-
-function getFileCreationDate(filePath: string): string {
-  try {
-    const stats = fs.statSync(filePath);
-    return stats.birthtime.toISOString().split('T')[0];
-  } catch (error) {
-    return new Date().toISOString().split('T')[0];
-  }
-}
-
-function getFileModificationDate(filePath: string): string {
-  try {
-    const stats = fs.statSync(filePath);
-    return stats.mtime.toISOString().split('T')[0];
-  } catch (error) {
-    return new Date().toISOString().split('T')[0];
-  }
-}
 
 export async function getAllPosts(): Promise<PostMeta[]> {
   const categories = fs.readdirSync(postsDirectory).filter(file => 
@@ -40,11 +22,6 @@ export async function getAllPosts(): Promise<PostMeta[]> {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const { data } = matter(fileContents);
       const slug = `${category}/${fileName.replace(/\.md$/, '')}`;
-
-      // date가 없으면 오늘 날짜를 사용
-      if (!data.date) {
-        data.date = new Date().toISOString().split('T')[0];
-      }
 
       // 폴더명을 카테고리로 사용
       data.category = category;
@@ -65,20 +42,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
   
-  // frontmatter에 date가 없으면 파일 생성일을 사용
-  if (!data.date) {
-    data.date = getFileCreationDate(fullPath);
-  }
-
-  // lastModified가 없으면 파일 수정일을 사용
-  if (!data.lastModified) {
-    const modifiedDate = getFileModificationDate(fullPath);
-    if (modifiedDate !== data.date) {
-      data.lastModified = modifiedDate;
-    }
-  }
-
-  // 폴더명을 카테고리로 사용 (md 파일의 category를 덮어씀)
+  // 폴더명을 카테고리로 사용
   data.category = category;
 
   const processedContent = await remark()

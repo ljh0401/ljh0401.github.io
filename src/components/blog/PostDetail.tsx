@@ -6,6 +6,18 @@ interface PostDetailProps {
   post: Post;
 }
 
+function formatDateTime(datetime: string) {
+  const date = new Date(datetime);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
 export default function PostDetail({ post }: PostDetailProps) {
   return (
     <article className="prose prose-lg max-w-none">
@@ -13,9 +25,13 @@ export default function PostDetail({ post }: PostDetailProps) {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-4">
-          <time className="text-sm">작성일: {post.date}</time>
+          <time dateTime={post.datetime} className="text-sm">
+            작성: {formatDateTime(post.datetime)}
+          </time>
           {post.lastModified && (
-            <time className="text-sm">수정일: {post.lastModified}</time>
+            <time dateTime={post.lastModified} className="text-sm">
+              수정: {formatDateTime(post.lastModified)}
+            </time>
           )}
           <span className="text-sm px-2 py-1 bg-gray-100 rounded">
             {post.category}

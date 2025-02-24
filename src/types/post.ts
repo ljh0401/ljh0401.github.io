@@ -1,13 +1,13 @@
 export interface PostHistory {
   version: number;
-  date: string;
+  datetime: string;
   changes: string;
 }
 
 export interface Post {
   title: string;
   description: string;
-  date: string;
+  datetime: string;
   tags: string[];
   category: string;
   slug: string;
@@ -19,7 +19,7 @@ export interface Post {
 export interface PostMeta {
   slug: string;
   title: string;
-  date: string;
+  datetime: string;
   description: string;
   tags?: string[];
   category: string;

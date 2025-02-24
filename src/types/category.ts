@@ -1,3 +1,5 @@
+import { Post } from '@/types/post';
+
 export interface Category {
   id: string;
   name: string;

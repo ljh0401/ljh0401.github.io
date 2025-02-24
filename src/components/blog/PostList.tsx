@@ -5,6 +5,18 @@ interface PostListProps {
   posts: PostMeta[];
 }
 
+function formatDateTime(datetime: string) {
+  const date = new Date(datetime);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
 export default function PostList({ posts }: PostListProps) {
   return (
     <div className="space-y-4">
@@ -14,7 +26,7 @@ export default function PostList({ posts }: PostListProps) {
           className="border-b pb-4 last:border-b-0"
         >
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <time>{post.date}</time>
+            <time dateTime={post.datetime}>{formatDateTime(post.datetime)}</time>
             <span>•</span>
             <span>{post.category}</span>
           </div>
