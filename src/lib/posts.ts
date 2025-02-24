@@ -8,53 +8,90 @@ import { PaginationResult, PaginationParams } from '@/types/pagination';
 
 const postsDirectory = path.join(process.cwd(), 'src/content/posts');
 
+// 슬러그 생성을 위한 유틸리티 함수
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase() // 소문자로 변환
+    .normalize('NFD') // 유니코드 정규화
+    .replace(/[\u0300-\u036f]/g, '') // 발음 구별 기호 제거
+    .replace(/[^a-z0-9가-힣]/g, '-') // 알파벳, 숫자, 한글이 아닌 문자를 하이픈으로 변환
+    .replace(/--+/g, '-') // 여러 개의 하이픈을 하나로 변환
+    .replace(/^-|-$/g, ''); // 시작과 끝의 하이픈 제거
+}
+
 export async function getAllPosts(): Promise<PostMeta[]> {
-  const categories = fs.readdirSync(postsDirectory).filter(file => 
-    fs.statSync(path.join(postsDirectory, file)).isDirectory()
-  );
+  try {
+    const categories = fs.readdirSync(postsDirectory).filter(file => 
+      fs.statSync(path.join(postsDirectory, file)).isDirectory()
+    );
 
-  const allPosts = categories.flatMap(category => {
-    const categoryPath = path.join(postsDirectory, category);
-    const files = fs.readdirSync(categoryPath);
-    
-    return files.map(fileName => {
-      const fullPath = path.join(categoryPath, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const { data } = matter(fileContents);
-      const slug = `${category}/${fileName.replace(/\.md$/, '')}`;
+    const allPosts = categories.flatMap(category => {
+      const categoryPath = path.join(postsDirectory, category);
+      const files = fs.readdirSync(categoryPath);
+      
+      return files.map(fileName => {
+        const fullPath = path.join(categoryPath, fileName);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data } = matter(fileContents);
+        
+        // 파일명에서 .md 확장자를 제거하고 슬러그 생성
+        const baseSlug = fileName.replace(/\.md$/, '');
+        const safeSlug = generateSlug(baseSlug);
+        const slug = `${category}/${safeSlug}`;
 
-      // 폴더명을 카테고리로 사용
-      data.category = category;
+        // 폴더명을 카테고리로 사용
+        data.category = category;
 
-      return {
-        slug,
-        ...(data as Omit<PostMeta, 'slug'>),
-      };
+        return {
+          slug,
+          ...(data as Omit<PostMeta, 'slug'>),
+        };
+      });
     });
-  });
 
-  return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
+    return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
+  } catch (error) {
+    console.error('Error getting all posts:', error);
+    throw new Error('포스트를 불러오는 중 오류가 발생했습니다.');
+  }
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {
-  const [category, postSlug] = slug.split('/');
-  const fullPath = path.join(postsDirectory, category, `${postSlug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContents);
-  
-  // 폴더명을 카테고리로 사용
-  data.category = category;
+  try {
+    const [category, postSlug] = slug.split('/');
+    const categoryPath = path.join(postsDirectory, category);
+    
+    // 디렉토리 내의 모든 파일을 읽어서 매칭되는 슬러그 찾기
+    const files = fs.readdirSync(categoryPath);
+    const fileName = files.find(file => {
+      const baseSlug = file.replace(/\.md$/, '');
+      return generateSlug(baseSlug) === postSlug;
+    });
 
-  const processedContent = await remark()
-    .use(html)
-    .process(content);
-  const contentHtml = processedContent.toString();
+    if (!fileName) {
+      throw new Error('포스트를 찾을 수 없습니다.');
+    }
 
-  return {
-    slug,
-    content: contentHtml,
-    ...(data as Omit<Post, 'slug' | 'content'>),
-  };
+    const fullPath = path.join(categoryPath, fileName);
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = matter(fileContents);
+    
+    data.category = category;
+
+    const processedContent = await remark()
+      .use(html)
+      .process(content);
+    const contentHtml = processedContent.toString();
+
+    return {
+      slug,
+      content: contentHtml,
+      ...(data as Omit<Post, 'slug' | 'content'>),
+    };
+  } catch (error) {
+    console.error('Error getting post by slug:', error);
+    throw new Error('포스트를 불러오는 중 오류가 발생했습니다.');
+  }
 }
 
 export async function getPaginatedPosts({

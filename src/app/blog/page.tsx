@@ -57,7 +57,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          baseUrl={selectedCategory ? `/blog?category=${selectedCategory}` : '/blog'}
+          baseUrl="/blog"
+          category={selectedCategory}
         />
       </div>
     </div>
@@ -66,9 +67,32 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
 export async function generateStaticParams() {
   const posts = await getAllPosts();
+  const categories = Array.from(new Set(posts.map(post => post.category)));
   const totalPages = Math.ceil(posts.length / 10);
   
-  return Array.from({ length: totalPages }, (_, i) => ({
-    searchParams: { page: (i + 1).toString() }
-  }));
+  const params = [];
+  
+  // 카테고리가 없는 경우의 페이지들
+  for (let i = 1; i <= totalPages; i++) {
+    params.push({
+      searchParams: { page: i.toString() }
+    });
+  }
+  
+  // 각 카테고리별 페이지들
+  for (const category of categories) {
+    const categoryPosts = posts.filter(post => post.category === category);
+    const categoryPages = Math.ceil(categoryPosts.length / 10);
+    
+    for (let i = 1; i <= categoryPages; i++) {
+      params.push({
+        searchParams: {
+          category,
+          page: i.toString()
+        }
+      });
+    }
+  }
+  
+  return params;
 } 
