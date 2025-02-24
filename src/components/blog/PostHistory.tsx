@@ -5,6 +5,18 @@ interface PostHistoryProps {
   history?: PostHistoryType[];
 }
 
+function formatDateTime(datetime: string) {
+  const date = new Date(datetime);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
 export default function PostHistory({ lastModified, history }: PostHistoryProps) {
   if (!lastModified && !history?.length) return null;
 
@@ -13,7 +25,7 @@ export default function PostHistory({ lastModified, history }: PostHistoryProps)
       <h2 className="text-xl font-semibold mb-4">포스트 히스토리</h2>
       {lastModified && (
         <p className="text-sm text-gray-600 mb-4">
-          마지막 수정일: {lastModified}
+          마지막 수정: {formatDateTime(lastModified)}
         </p>
       )}
       {history && history.length > 0 && (
@@ -24,7 +36,7 @@ export default function PostHistory({ lastModified, history }: PostHistoryProps)
               className="flex items-start gap-4 text-sm text-gray-600"
             >
               <div className="min-w-[100px]">v{item.version}</div>
-              <div className="min-w-[120px]">{item.datetime}</div>
+              <div className="min-w-[120px]">{formatDateTime(item.datetime)}</div>
               <div>{item.changes}</div>
             </div>
           ))}

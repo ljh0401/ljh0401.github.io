@@ -33,7 +33,7 @@ export async function getAllPosts(): Promise<PostMeta[]> {
     });
   });
 
-  return allPosts.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {

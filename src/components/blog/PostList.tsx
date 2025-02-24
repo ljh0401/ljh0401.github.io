@@ -30,7 +30,7 @@ export default function PostList({ posts }: PostListProps) {
             <span>•</span>
             <span>{post.category}</span>
           </div>
-          <Link href={`/blog/${post.slug}`}>
+          <Link href={`/blog/${post.category}/${post.slug.split('/')[1]}`}>
             <h3 className="text-xl font-semibold hover:text-blue-600 transition-colors">
               {post.title}
             </h3>
