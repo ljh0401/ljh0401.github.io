@@ -24,7 +24,7 @@ export default function PostHistory({ lastModified, history }: PostHistoryProps)
               className="flex items-start gap-4 text-sm text-gray-600"
             >
               <div className="min-w-[100px]">v{item.version}</div>
-              <div className="min-w-[120px]">{item.date}</div>
+              <div className="min-w-[120px]">{item.datetime}</div>
               <div>{item.changes}</div>
             </div>
           ))}
