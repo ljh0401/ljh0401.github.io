@@ -12,10 +12,6 @@ interface BlogPageProps {
   };
 }
 
-// 정적 페이지 생성을 위한 설정
-export const dynamic = 'force-static';
-export const dynamicParams = false;
-
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   // 페이지 파라미터를 안전하게 처리
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
