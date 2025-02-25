@@ -7,7 +7,7 @@ const nextConfig = {
     unoptimized: true,
   },
   basePath: '',
-  assetPrefix: '.',
+  assetPrefix: '',
   trailingSlash: true,
   experimental: {
     // turbotrace 설정 제거 (필요한 경우가 아니라면)
