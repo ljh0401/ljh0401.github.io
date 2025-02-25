@@ -6,8 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/ljh0401.github.io' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/ljh0401.github.io/' : '',
+  basePath: '',
+  assetPrefix: '',
   trailingSlash: true,
   experimental: {
     // turbotrace 설정 제거 (필요한 경우가 아니라면)
