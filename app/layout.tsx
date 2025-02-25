@@ -1,11 +1,8 @@
-import { Inter } from 'next/font/google';
 import { Header, Footer, Profile } from '@/components/index';
 import CategoryNav from '@/components/layout/CategoryNav';
 import '@/styles/globals.css';
 import Link from 'next/link';
 import { Suspense } from 'react';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: '개발자 블로그',
@@ -19,7 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={inter.className}>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="font-inter">
         {/* 모바일 헤더 */}
         <div className="md:hidden">
           <Header />
