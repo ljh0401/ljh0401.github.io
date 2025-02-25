@@ -5,7 +5,7 @@ import Pagination from '@/components/common/Pagination';
 import Link from 'next/link';
 import { CATEGORIES } from '@/constants/categories';
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 interface BlogPageProps {
   searchParams: { 
