@@ -158,3 +158,5 @@ sketch
 .env.test
 .env.development.local
 .next/
+
+.vscode

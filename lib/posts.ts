@@ -34,7 +34,11 @@ export async function getAllPosts(): Promise<PostMeta[]> {
 
     const allPosts = categories.flatMap(category => {
       const categoryPath = path.join(postsDirectory, category);
-      const files = fs.readdirSync(categoryPath);
+      // 디렉토리 내의 .md 파일만 필터링
+      const files = fs.readdirSync(categoryPath).filter(file => 
+        file.endsWith('.md') && 
+        fs.statSync(path.join(categoryPath, file)).isFile()
+      );
       
       return files.map(fileName => {
         const fullPath = path.join(categoryPath, fileName);
@@ -54,7 +58,6 @@ export async function getAllPosts(): Promise<PostMeta[]> {
     return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
   } catch (error) {
     console.error('Error getting all posts:', error);
-    // 개발 환경에서는 빈 배열 반환
     if (process.env.NODE_ENV === 'development') {
       return [];
     }
