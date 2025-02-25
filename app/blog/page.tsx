@@ -7,6 +7,7 @@ import { CATEGORIES } from '@/constants/categories';
 import { CategoryFilter } from '@/components/blog';
 
 export const dynamic = "force-static";
+export const dynamicParams = false; // 동적 라우트 비활성화
 
 interface BlogPageProps {
   searchParams: { 
@@ -15,7 +16,6 @@ interface BlogPageProps {
   };
 }
 
-// generateStaticParams 수정
 export async function generateStaticParams() {
   const posts = await getAllPosts();
   
@@ -31,25 +31,13 @@ export async function generateStaticParams() {
   const totalPages = Math.ceil(posts.length / 10);
   const paths = [];
   
-  // 1. 기본 경로 (/blog)
+  // 기본 경로
   paths.push({ searchParams: {} });
   
-  // 2. 페이지 번호별 경로 (/blog?page=1,2,3...)
-  for (let i = 1; i <= totalPages; i++) {
-    paths.push({ 
-      searchParams: { page: i.toString() } 
-    });
-  }
-  
-  // 3. 카테고리별 경로 (/blog?category=xxx)
-  // Set을 Array로 변환하여 iteration
+  // 모든 가능한 조합 생성
   Array.from(categoryPaths).forEach(categoryPath => {
-    // 카테고리만 있는 경로
-    paths.push({ 
-      searchParams: { category: categoryPath } 
-    });
+    paths.push({ searchParams: { category: categoryPath } });
     
-    // 카테고리 + 페이지 번호 조합
     const categoryPosts = posts.filter(post => {
       if (categoryPath.includes('/')) {
         const [category, subcategory] = categoryPath.split('/');

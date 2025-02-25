@@ -10,7 +10,6 @@ const nextConfig = {
   assetPrefix: '',
   trailingSlash: true,
   experimental: {
-    // turbotrace 설정 제거 (필요한 경우가 아니라면)
   },
   webpack: (config) => {
     config.resolve.alias = {
@@ -25,7 +24,6 @@ const nextConfig = {
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
-  generateStaticParams: true,
 }
 
 module.exports = nextConfig 

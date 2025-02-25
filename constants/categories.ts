@@ -15,6 +15,16 @@ export const CATEGORIES: Category[] = [
         id: 'backend',
         name: '백엔드',
         description: '백엔드 개발'
+      },
+      {
+        id: 'database',
+        name: '데이터베이스',
+        description: '데이터베이스스 개발'
+      },
+      {
+        id: 'infra',
+        name: '인프라',
+        description: '인프라 개발'
       }
     ]
   },
@@ -24,14 +34,14 @@ export const CATEGORIES: Category[] = [
     description: '알고리즘 문제 풀이',
     subcategories: [
       {
-        id: 'basic',
-        name: '기초',
-        description: '기초 알고리즘'
+        id: 'concept',
+        name: '개념',
+        description: '개념 알고리즘'
       },
       {
-        id: 'advanced',
-        name: '심화',
-        description: '심화 알고리즘'
+        id: 'solution',
+        name: '풀이',
+        description: '알고리즘 풀이'
       }
     ]
   },
