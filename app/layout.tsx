@@ -8,7 +8,7 @@ import { Suspense } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "이준환의 임시 블로그",
+  title: "나의 작은 블로그",
   description: "기술 블로그 및 포트폴리오",
 };
 
@@ -29,9 +29,11 @@ export default function RootLayout({
           {/* 사이드바 (데스크톱) */}
           <aside className="hidden md:flex flex-col w-64 min-h-screen fixed bg-white border-r">
             <div className="p-6 flex flex-col h-full">
-              <Link href="/" className="text-xl font-bold mb-6">
-                ljh0401
-              </Link>
+              <div className="flex justify-center items-center">
+                <Link href="/" className="text-xl font-bold mb-6 ">
+                  나의 작은 블로그
+                </Link>
+              </div>
               <Profile />
               <nav className="mt-6">
                 <ul className="space-y-2">
@@ -47,16 +49,23 @@ export default function RootLayout({
                 <Suspense fallback={<div>카테고리 로딩중...</div>}>
                   <CategoryNav />
                 </Suspense>
+                <ul className="space-y-2 mt-2 pt-1">
+                  <li>
+                    <Link
+                      href="/resume"
+                      className="text-gray-600 hover:text-blue-600 text-sm"
+                    >
+                      이력서
+                    </Link>
+                  </li>
+                </ul>
               </nav>
-              <div className="mt-auto pt-6 border-t text-xs text-gray-500">
-                © 2024 ljh0401
-              </div>
             </div>
           </aside>
 
           {/* 메인 콘텐츠 */}
           <main className="flex-1 bg-gray-50 md:ml-64">
-            <div className="max-w-3xl mx-auto px-4 py-8">{children}</div>
+            <div className="max-w-6xl mx-auto px-4 py-8">{children}</div>
           </main>
         </div>
         <Footer />

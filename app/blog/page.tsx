@@ -11,7 +11,7 @@ export default async function BlogPage() {
   return (
     <div className="container-wrapper">
       <div className="card">
-        <h1 className="text-3xl font-bold mb-8">블로그</h1>
+        <h1 className="text-3xl font-bold mb-8">전체</h1>
         <PostList posts={posts} />
       </div>
     </div>

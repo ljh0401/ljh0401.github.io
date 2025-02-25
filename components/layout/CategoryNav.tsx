@@ -62,7 +62,7 @@ export default async function CategoryNav() {
           </svg>
         </summary>
 
-        <ul className="mt-2 space-y-1">
+        <ul className="mt-2 space-y-2">
           <li>
             <Link
               href="/blog"

@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { CATEGORIES } from '@/constants/categories';
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { CATEGORIES } from "@/constants/categories";
 
 // 정적으로 생성될 메뉴 아이템 컴포넌트
-function MenuItem({ 
-  href, 
-  isActive, 
-  onClick, 
-  children 
-}: { 
+function MenuItem({
+  href,
+  isActive,
+  onClick,
+  children,
+}: {
   href: string;
   isActive: boolean;
   onClick: () => void;
@@ -20,9 +20,7 @@ function MenuItem({
   return (
     <Link
       href={href}
-      className={`block py-2 ${
-        isActive ? 'text-blue-600' : 'text-gray-600'
-      }`}
+      className={`block py-2 ${isActive ? "text-blue-600" : "text-gray-600"}`}
       onClick={onClick}
     >
       {children}
@@ -34,11 +32,11 @@ export default function MobileMenu() {
   // 클라이언트 상태
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  
+
   // 경로 관련 훅은 별도로 관리
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentCategory = searchParams.get('category');
+  const currentCategory = searchParams.get("category");
 
   // 메뉴 닫기 핸들러
   const handleClose = () => {
@@ -47,7 +45,9 @@ export default function MobileMenu() {
   };
 
   return (
-    <div className="md:hidden"> {/* 데스크톱에서는 숨김 */}
+    <div className="md:hidden">
+      {" "}
+      {/* 데스크톱에서는 숨김 */}
       <button
         className="p-2"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -71,7 +71,6 @@ export default function MobileMenu() {
           )}
         </svg>
       </button>
-
       {/* 모바일 메뉴 오버레이 */}
       {isMenuOpen && (
         <>
@@ -81,7 +80,7 @@ export default function MobileMenu() {
             onClick={handleClose}
             aria-hidden="true"
           />
-          
+
           {/* 메뉴 내용 */}
           <nav
             className="absolute top-16 left-0 right-0 bg-white border-t py-4 z-50 shadow-lg"
@@ -93,7 +92,7 @@ export default function MobileMenu() {
                 <li>
                   <MenuItem
                     href="/"
-                    isActive={pathname === '/'}
+                    isActive={pathname === "/"}
                     onClick={handleClose}
                   >
                     메인
@@ -110,7 +109,7 @@ export default function MobileMenu() {
                       <span className="font-medium">카테고리</span>
                       <svg
                         className={`w-4 h-4 transition-transform ${
-                          isCategoryOpen ? 'rotate-180' : ''
+                          isCategoryOpen ? "rotate-180" : ""
                         }`}
                         fill="none"
                         stroke="currentColor"
@@ -125,14 +124,14 @@ export default function MobileMenu() {
                         />
                       </svg>
                     </button>
-                    
+
                     {/* 카테고리 목록 */}
                     {isCategoryOpen && (
                       <ul className="ml-4 mt-2 space-y-2">
                         <li>
                           <MenuItem
                             href="/blog"
-                            isActive={pathname === '/blog' && !currentCategory}
+                            isActive={pathname === "/blog" && !currentCategory}
                             onClick={handleClose}
                           >
                             전체
@@ -153,6 +152,15 @@ export default function MobileMenu() {
                     )}
                   </div>
                 </li>
+                <li>
+                  <MenuItem
+                    href="/resume"
+                    isActive={pathname === "/resume"}
+                    onClick={handleClose}
+                  >
+                    이력서
+                  </MenuItem>
+                </li>
               </ul>
             </div>
           </nav>
@@ -160,4 +168,4 @@ export default function MobileMenu() {
       )}
     </div>
   );
-} 
+}

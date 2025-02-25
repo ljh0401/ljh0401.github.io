@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { CATEGORIES } from "@/constants/categories";
-import { Category } from "@/types/category";
 
 interface CategoryFilterProps {
   selectedCategory: string;
