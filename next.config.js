@@ -6,23 +6,19 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '',
+  basePath: process.env.NODE_ENV === 'production' ? '/ljh0401.github.io' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/ljh0401.github.io/' : '',
   trailingSlash: true,
   experimental: {
     turbotrace: {
-      enabled: true,
+      enabled: false,
     },
   },
-  webpack: (config, { isServer }) => {
-    // TypeScript 관련 설정 추가
-    config.resolve.extensions.push('.ts', '.tsx');
-    
-    // 절대 경로 설정
+  webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.join(__dirname, 'src'),
+      '@': path.join(__dirname, '.'),
     };
-
     return config;
   },
   distDir: process.env.NODE_ENV === 'development' ? '.next' : 'out',

@@ -24,22 +24,17 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./*"]
     },
     "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/types/**/*.ts",
-    "src/lib/**/*.ts",
-    "src/components/**/*.tsx",
-    "src/app/**/*.tsx",
-    "src/constants/**/*.ts",
-    "src/content/**/*.md",
-    ".next/types/**/*.ts",
-    "out/types/**/*.ts"
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

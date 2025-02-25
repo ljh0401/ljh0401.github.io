@@ -6,7 +6,8 @@ import html from 'remark-html';
 import { Post, PostMeta } from '@/types/post';
 import { PaginationResult, PaginationParams } from '@/types/pagination';
 
-const postsDirectory = path.join(process.cwd(), 'src/content/posts');
+// 경로 수정
+const postsDirectory = path.join(process.cwd(), 'content/posts');
 
 // 슬러그 생성을 위한 유틸리티 함수
 function generateSlug(text: string): string {
@@ -21,6 +22,12 @@ function generateSlug(text: string): string {
 
 export async function getAllPosts(): Promise<PostMeta[]> {
   try {
+    // 디렉토리가 없으면 생성
+    if (!fs.existsSync(postsDirectory)) {
+      fs.mkdirSync(postsDirectory, { recursive: true });
+      return [];
+    }
+
     const categories = fs.readdirSync(postsDirectory).filter(file => 
       fs.statSync(path.join(postsDirectory, file)).isDirectory()
     );
@@ -33,13 +40,8 @@ export async function getAllPosts(): Promise<PostMeta[]> {
         const fullPath = path.join(categoryPath, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data } = matter(fileContents);
-        
-        // 파일명에서 .md 확장자를 제거하고 슬러그 생성
-        const baseSlug = fileName.replace(/\.md$/, '');
-        const safeSlug = generateSlug(baseSlug);
-        const slug = `${category}/${safeSlug}`;
+        const slug = `${category}/${fileName.replace(/\.md$/, '')}`;
 
-        // 폴더명을 카테고리로 사용
         data.category = category;
 
         return {
@@ -52,6 +54,10 @@ export async function getAllPosts(): Promise<PostMeta[]> {
     return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
   } catch (error) {
     console.error('Error getting all posts:', error);
+    // 개발 환경에서는 빈 배열 반환
+    if (process.env.NODE_ENV === 'development') {
+      return [];
+    }
     throw new Error('포스트를 불러오는 중 오류가 발생했습니다.');
   }
 }
