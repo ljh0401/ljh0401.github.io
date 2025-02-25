@@ -12,6 +12,48 @@ interface BlogPageProps {
   };
 }
 
+// generateStaticParams 수정
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  const categories = Array.from(new Set(posts.map(post => post.category)));
+  const totalPages = Math.ceil(posts.length / 10);
+  
+  const paths = [];
+  
+  // 1. 기본 경로 (/blog)
+  paths.push({ searchParams: {} });
+  
+  // 2. 페이지 번호별 경로 (/blog?page=1,2,3...)
+  for (let i = 1; i <= totalPages; i++) {
+    paths.push({ 
+      searchParams: { page: i.toString() } 
+    });
+  }
+  
+  // 3. 카테고리별 경로 (/blog?category=xxx)
+  for (const category of categories) {
+    // 카테고리만 있는 경로
+    paths.push({ 
+      searchParams: { category } 
+    });
+    
+    // 카테고리 + 페이지 번호 조합
+    const categoryPosts = posts.filter(post => post.category === category);
+    const categoryPages = Math.ceil(categoryPosts.length / 10);
+    
+    for (let i = 1; i <= categoryPages; i++) {
+      paths.push({ 
+        searchParams: {
+          category,
+          page: i.toString()
+        }
+      });
+    }
+  }
+  
+  return paths;
+}
+
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   // 페이지 파라미터를 안전하게 처리
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
@@ -64,44 +106,4 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       </div>
     </div>
   );
-}
-
-// generateStaticParams 수정
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  const categories = Array.from(new Set(posts.map(post => post.category)));
-  const totalPages = Math.ceil(posts.length / 10);
-  
-  const paths = [];
-  
-  // 기본 경로 추가
-  paths.push({ searchParams: {} });
-  
-  // 페이지 번호만 있는 경로
-  for (let i = 1; i <= totalPages; i++) {
-    paths.push({ 
-      searchParams: { page: i.toString() } 
-    });
-  }
-  
-  // 카테고리별 경로
-  for (const category of categories) {
-    paths.push({ 
-      searchParams: { category } 
-    });
-    
-    const categoryPosts = posts.filter(post => post.category === category);
-    const categoryPages = Math.ceil(categoryPosts.length / 10);
-    
-    for (let i = 1; i <= categoryPages; i++) {
-      paths.push({ 
-        searchParams: {
-          category,
-          page: i.toString()
-        }
-      });
-    }
-  }
-  
-  return paths;
 } 

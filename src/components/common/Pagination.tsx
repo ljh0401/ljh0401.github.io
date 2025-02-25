@@ -9,29 +9,30 @@ interface PaginationProps {
 }
 
 export default function Pagination({ currentPage, totalPages, baseUrl, category }: PaginationProps) {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  
+  // 정적 URL 생성 함수
   const getPageUrl = (page: number) => {
     const params = new URLSearchParams();
     if (category) params.set('category', category);
-    params.set('page', page.toString());
-    return `${baseUrl}?${params.toString()}`;
+    if (page > 1) params.set('page', page.toString());
+    const queryString = params.toString();
+    return `${baseUrl}${queryString ? `?${queryString}` : ''}`;
   };
-  
+
   return (
-    <nav className="flex justify-center items-center space-x-2 my-8 px-4" aria-label="페이지 네비게이션">
+    <nav className="flex justify-center items-center space-x-2 my-8">
+      {/* 이전 페이지 */}
       {currentPage > 1 && (
         <Link
           href={getPageUrl(currentPage - 1)}
           className="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-          aria-label="이전 페이지"
         >
           이전
         </Link>
       )}
       
+      {/* 페이지 번호 */}
       <div className="hidden md:flex space-x-1">
-        {pages.map((page) => (
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <Link
             key={page}
             href={getPageUrl(page)}
@@ -40,25 +41,17 @@ export default function Pagination({ currentPage, totalPages, baseUrl, category 
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
-            aria-current={currentPage === page ? 'page' : undefined}
-            aria-label={`${page} 페이지`}
           >
             {page}
           </Link>
         ))}
       </div>
       
-      <div className="md:hidden">
-        <span className="px-3 py-2 bg-gray-100 rounded-lg">
-          {currentPage} / {totalPages}
-        </span>
-      </div>
-      
+      {/* 다음 페이지 */}
       {currentPage < totalPages && (
         <Link
           href={getPageUrl(currentPage + 1)}
           className="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-          aria-label="다음 페이지"
         >
           다음
         </Link>
