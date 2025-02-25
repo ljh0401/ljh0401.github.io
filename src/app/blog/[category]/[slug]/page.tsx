@@ -2,9 +2,6 @@ import { getPostBySlug, getAllPosts } from '@/lib/posts';
 import PostDetail from '@/components/blog/PostDetail';
 import { notFound } from 'next/navigation';
 
-export const dynamic = 'force-static';
-export const dynamicParams = false;
-
 interface PostPageProps {
   params: {
     category: string;
