@@ -24,7 +24,8 @@ const nextConfig = {
   distDir: process.env.NODE_ENV === 'development' ? '.next' : 'out',
   generateBuildId: async () => {
     return 'build-' + Date.now();
-  }
+  },
+  generateStaticParams: true,
 }
 
 module.exports = nextConfig 

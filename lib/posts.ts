@@ -5,6 +5,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import { Post, PostMeta } from '@/types/post';
 import { PaginationResult, PaginationParams } from '@/types/pagination';
+import { CategoryPath } from '@/types/category';
 
 // 경로 수정
 const postsDirectory = path.join(process.cwd(), 'content/posts');
@@ -18,6 +19,21 @@ function generateSlug(text: string): string {
     .replace(/[^a-z0-9가-힣]/g, '-') // 알파벳, 숫자, 한글이 아닌 문자를 하이픈으로 변환
     .replace(/--+/g, '-') // 여러 개의 하이픈을 하나로 변환
     .replace(/^-|-$/g, ''); // 시작과 끝의 하이픈 제거
+}
+
+export function getCategoryFromSlug(slug: string): CategoryPath {
+  const parts = slug.split('/');
+  // 폴더 구조가 category/subcategory/post-name.md 형태일 경우
+  if (parts.length >= 2) {
+    return {
+      category: parts[0],
+      subcategory: parts[1]
+    };
+  }
+  // 폴더 구조가 category/post-name.md 형태일 경우
+  return {
+    category: parts[0]
+  };
 }
 
 export async function getAllPosts(): Promise<PostMeta[]> {
@@ -51,7 +67,19 @@ export async function getAllPosts(): Promise<PostMeta[]> {
       });
     });
 
-    return allPosts.sort((a, b) => (a.datetime < b.datetime ? 1 : -1));
+    const posts = await Promise.all(allPosts.map(async (post) => {
+      const categoryInfo = getCategoryFromSlug(post.slug);
+      
+      return {
+        ...post,
+        category: categoryInfo.category,
+        subcategory: categoryInfo.subcategory
+      };
+    }));
+
+    return posts.sort((a, b) => (
+      new Date(b.datetime).getTime() - new Date(a.datetime).getTime()
+    ));
   } catch (error) {
     console.error('Error getting all posts:', error);
     // 개발 환경에서는 빈 배열 반환
@@ -107,9 +135,17 @@ export async function getPaginatedPosts({
 }: PaginationParams & { category?: string } = {}): Promise<PaginationResult<PostMeta>> {
   const allPosts = await getAllPosts();
   
-  // 카테고리 필터링
+  // 카테고리 필터링 (메인 카테고리/서브카테고리 모두 처리)
   const filteredPosts = category
-    ? allPosts.filter(post => post.category === category)
+    ? allPosts.filter(post => {
+        if (category.includes('/')) {
+          // 서브카테고리가 포함된 경우 (예: 'development/frontend')
+          const [mainCategory, subCategory] = category.split('/');
+          return post.category === mainCategory && post.subcategory === subCategory;
+        }
+        // 메인 카테고리만 있는 경우
+        return post.category === category;
+      })
     : allPosts;
   
   const startIndex = (page - 1) * limit;

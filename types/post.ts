@@ -23,6 +23,7 @@ export interface PostMeta {
   description: string;
   tags?: string[];
   category: string;
+  subcategory?: string;
 }
 
 export interface Post extends PostMeta {
