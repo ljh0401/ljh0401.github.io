@@ -19,11 +19,4 @@ export const CATEGORIES: Category[] = [
       },
     ],
   },
-  {
-    id: "review",
-    name: "프로젝트",
-    description: "프로젝트 관련",
-    subcategories: [],
-  },
-  // 필요한 카테고리 추가
 ];
