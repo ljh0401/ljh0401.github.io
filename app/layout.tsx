@@ -65,7 +65,7 @@ export default function RootLayout({
 
           {/* 메인 콘텐츠 */}
           <main className="flex-1 bg-gray-50 md:ml-64">
-            <div className="max-w-6xl mx-auto px-4 py-8">{children}</div>
+            <div className="max-w-4xl mx-auto px-4 py-8">{children}</div>
           </main>
         </div>
         <Footer />

@@ -9,9 +9,9 @@ export default async function HomePage() {
   const posts = await getAllPosts();
 
   return (
-    <div className="space-y-8">
+    <div className="container-wrapper">
       {/* 최신 글 섹션 */}
-      <section className="card">
+      <div className="card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">최신 글</h2>
           <Link 
@@ -22,7 +22,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <PostList posts={posts.slice(0, 5)} />
-      </section>
+      </div>
     </div>
   );
 } 
