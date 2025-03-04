@@ -106,7 +106,7 @@ export async function getAllPosts(): Promise<PostMeta[]> {
   }
 }
 
-export async function getPostBySlug(slug: string): Promise<Post> {
+export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const parts = slug.split("/");
     let fullPath: string;
@@ -127,7 +127,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     }
 
     if (!fs.existsSync(fullPath)) {
-      throw new Error("포스트를 찾을 수 없습니다.");
+      return null; // 에러를 발생시키는 대신 null 반환
     }
 
     const fileContents = fs.readFileSync(fullPath, "utf8");
@@ -148,7 +148,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     } as Post;
   } catch (error) {
     console.error("Error getting post by slug:", error);
-    throw new Error("포스트를 불러오는 중 오류가 발생했습니다.");
+    return null; // 에러가 발생해도 null 반환
   }
 }
 

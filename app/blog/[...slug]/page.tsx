@@ -41,11 +41,11 @@ export default async function DynamicPage({ params }: PageProps) {
 
   try {
     // 현재 경로가 실제 포스트인지 확인
-    try {
-      const fullSlug = slug.join("/");
-      const post = await getPostBySlug(fullSlug);
+    const fullSlug = slug.join("/");
+    const post = await getPostBySlug(fullSlug);
 
-      // 포스트를 찾았다면 포스트 상세 페이지 표시
+    // 포스트를 찾았다면 포스트 상세 페이지 표시
+    if (post) {
       return (
         <div className="container-wrapper">
           <div className="card">
@@ -53,11 +53,9 @@ export default async function DynamicPage({ params }: PageProps) {
           </div>
         </div>
       );
-    } catch {
-      // 포스트를 찾지 못했다면 카테고리 목록 페이지로 진행
     }
 
-    // 카테고리 목록 페이지 (예: /blog/category 또는 /blog/category/subcategory)
+    // 포스트를 찾지 못했다면 카테고리 목록 페이지로 진행
     const categoryPath = slug.join("/");
     const posts = await getCategoryPosts(categoryPath);
 
